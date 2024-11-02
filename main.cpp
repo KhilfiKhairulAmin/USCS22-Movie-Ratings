@@ -1,3 +1,5 @@
+/*---------------------------------------------------- TODOS ----------------------------------------------------*/
+
 // [✓] Implement Struct for movies
 // TODO: Implement file read and write + debug print
 // TODO: Arrays and pointers movies
@@ -7,22 +9,86 @@
 // TODO: Report (cover page, table of content, intro about topic, explain important codes, example output)
 // ** Program must contain string input/output, struct, class, array, pointer, recursion, file operations 
 
+/*-------------------------------------------------- INCLUDES ---------------------------------------------------*/
+
 #include <iostream>
 #include <fstream>
 #include <string>
 using namespace std;
 
+/*---------------------------------------- STRUCT & FUNCTION PROTOTYPES -----------------------------------------*/
+
 struct Movie
 {
+    int id;
     string title;
     int year;
-    int rating;
+    int ratings;
 };
 
 void loadMovies(Movie* movies);
 void saveMovies(Movie* movies);
+int mainProgram();
+
+/*----------------------------------------------- MAIN FUNCTION ------------------------------------------------*/
 
 int main()
+{
+
+}
+
+/*-------------------------------------------- FUNCTION DEFINITION ---------------------------------------------*/
+
+void loadMovies(Movie* movies)
+{
+    ifstream inFile("movies.txt");
+
+    if (!inFile)
+    {
+        // Create new text file if it failed to open
+        ofstream outFile("movies.txt");
+        outFile << "id|title|year|ratings\n";
+        outFile.close();
+        return;
+    }
+
+    string line;
+    getline(inFile, line);
+    int cur = 0;
+    while (getline(inFile, line))
+    {
+        int i = 0;
+        int temp = line.find("|");
+        while(i != temp) movies[cur].title += line[i++];
+        i++;
+        temp = line.find("|", i);
+        while(i != temp) movies[cur].year += line[i++];
+        i++;
+        while(i < line.length()) movies[cur].ratings += line[i++];
+    }
+    inFile.close();
+}
+
+void saveMovies(Movie* movies)
+{
+  ofstream outFile("movies.txt");
+
+  if (!outFile)
+  {
+    cout << "Save Movies failed." << endl;
+    return;
+  }
+
+  cout << "Title|Release_Year|Ratings\n";
+
+  int cur = 0;
+  while(movies->title != "")
+  {
+    outFile << movies->title << "|" << movies->year << "|" << movies->ratings << "\n";
+  }
+}
+
+int mainProgram()
 {
     while(true)
     {
@@ -72,54 +138,5 @@ int main()
         
         
     }
-    
-    
-    
-    
     return 0;
-}
-
-void loadMovies(Movie* movies)
-{
-  ifstream inFile("movies.txt");
-
-  if (!inFile)
-  {
-    cout << "Load Movies failed." << endl;
-    return;
-  }
-
-  string line;
-  getline(inFile, line);
-  int cur = 0;
-  while (getline(inFile, line))
-  {
-    int i = 0;
-    int temp = line.find("|");
-    while(i != temp) movies[cur].title += line[i++];
-    i++;
-    temp = line.find("|", i);
-    while(i != temp) movies[cur].releaseYear += line[i++];
-    i++;
-    while(i < line.length()) movies[cur].ratings += line[i++];
-  }
-}
-
-void saveMovies(Movie* movies)
-{
-  ofstream outFile("movies.txt");
-
-  if (!outFile)
-  {
-    cout << "Save Movies failed." << endl;
-    return;
-  }
-
-  cout << "Title|Release_Year|Ratings\n";
-
-  int cur = 0;
-  while(movies->title != "")
-  {
-    outFile << movies->title << "|" << movies->releaseYear << "|" << movies->ratings << "\n";
-  }
 }
