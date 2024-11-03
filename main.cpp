@@ -32,18 +32,25 @@ class MovieManager
         const int SIZE = 200;
         Movie* const movies = new Movie[SIZE]();
 
-        static int totalMovies;
+        static int movieCount;
         
         void save();
 
     public:
         MovieManager();
+        ~MovieManager();
+        Movie* addMovie(string title, int year, int ratings);
+        Movie* searchId(int id);
+        Movie* searchTitle(string title);
+        Movie* searchYear(int year);
+        Movie* searchRatings(int ratings);
+        void deleteMovie(int id);
         void printMovies();
-        int mainProgram();
-        int getTotalMovies() { return totalMovies; }
+        
+        int getMovieCount() { return movieCount; }
 };
 
-int MovieManager::totalMovies = 0;
+int MovieManager::movieCount = 0;
 
 /*----------------------------------------------- MAIN FUNCTION ------------------------------------------------*/
 
@@ -55,6 +62,7 @@ int main()
 
 /*-------------------------------------------- FUNCTION DEFINITION ---------------------------------------------*/
 
+/* When created, automatically loads all movies from text file and store them inside a pointer inside the class */
 MovieManager::MovieManager()
 {
     ifstream inFile("movies.txt");
@@ -88,14 +96,32 @@ MovieManager::MovieManager()
 
         movies[cur].id = stoi(id);
         movies[cur].title = title;
-        *(movies[cur].year) = stoi(year);
+        int* yearConvert = new int(stoi(year));
+        movies[cur].year = yearConvert;
         movies[cur].ratings = stoi(ratings);
 
-        totalMovies += 1;
+        movieCount += 1;
     }
     inFile.close();
 }
 
+/* Clears all DMA when program ends */
+MovieManager::~MovieManager()
+{
+    // Make sure to save to text file before program ends
+    save();
+
+    // Deletes all year (because `year` is a DMA)
+    for (int i = 0; i < movieCount; i++)
+    {
+        delete movies[i].year;
+    }
+
+    // Free movies from memory
+    delete[] movies;
+}
+
+/* Write all movies data into text file */
 void MovieManager::save()
 {
   ofstream outFile("movies.txt");
@@ -111,7 +137,7 @@ void MovieManager::save()
 void MovieManager::printMovies()
 {
 
-    for (int i = 0; i < totalMovies; i++)
+    for (int i = 0; i < movieCount; i++)
     {
         Movie m = *(movies+i);
         cout << "Movie ID: " << m.id << ", Title: " << m.title << ", Year: " << m.year << ", Ratings: " << m.ratings << "\n"; 
