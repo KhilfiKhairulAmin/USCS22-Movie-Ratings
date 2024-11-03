@@ -14,6 +14,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <algorithm>
 using namespace std;
 
 /*---------------------------------------------- STRUCT AND CLASS -----------------------------------------------*/
@@ -47,6 +48,7 @@ class MovieManager
         void deleteMovie(int id);
         void printMovies();
         
+        Movie* getAllMovies() { return movies; }
         int getMovieCount() { return movieCount; }
 };
 
@@ -134,6 +136,7 @@ void MovieManager::save()
   }
 }
 
+/* Print all data about movies */
 void MovieManager::printMovies()
 {
 
@@ -141,6 +144,108 @@ void MovieManager::printMovies()
     {
         Movie m = *(movies+i);
         cout << "Movie ID: " << m.id << ", Title: " << m.title << ", Year: " << m.year << ", Ratings: " << m.ratings << "\n"; 
+    }
+}
+
+/* Create new movie and store it inside the pointer array */
+Movie* MovieManager::addMovie(string title, int year, int ratings)
+{
+    int* yearDMA = new int(year);
+    movies[movieCount].id = movieCount;
+    movies[movieCount].title = title;
+    movies[movieCount].year = yearDMA;
+    movies[movieCount].ratings = ratings;
+
+    movieCount++;
+
+    return movies+movieCount-1;
+}
+
+/* Search for a movie based on given movie id */
+Movie* MovieManager::searchId(int id)
+{
+    for (int i = 0; i < movieCount; i++)
+    {
+        if (movies[i].id == id)
+        {
+            return movies+i;
+        }
+    }
+}
+
+/* Search for movies based on given movie title */
+Movie* MovieManager::searchTitle(string title)
+{
+    Movie* result = new Movie[SIZE]();
+    title = toLowerCase(title);
+    int cur = 0;
+    for (int i = 0; i < movieCount; i++)
+    {
+        if (toLowerCase(movies[i].title).find(title) != string::npos)
+        {
+            result[cur] = movies[i];
+            cur++;
+        }
+    }
+    return result;
+}
+
+/* Search for movies based on given year */
+Movie* MovieManager::searchYear(int year)
+{
+    Movie* result = new Movie[SIZE]();
+    int cur = 0;
+    for (int i = 0; i < movieCount; i++)
+    {
+        if (*(movies[i].year) == year)
+        {
+            result[cur] = movies[i];
+            cur++;
+        }
+    }
+    return result;
+}
+
+/* Search for movies based on given ratings */
+Movie* MovieManager::searchRatings(int ratings)
+{
+    Movie* result = new Movie[SIZE]();
+    int cur = 0;
+    for (int i = 0; i < movieCount; i++)
+    {
+        if (movies[i].ratings == ratings)
+        {
+            result[cur] = movies[i];
+            cur++;
+        }
+    }
+    return result;
+}
+
+/* Delete movie based on given id */
+void MovieManager::deleteMovie(int id)
+{
+    Movie* m = searchId(id);
+
+    // Id doesn't exist
+    if (m->title == "")
+    {
+        return;
+    }
+
+    int curIndex = m - getAllMovies();
+    movieCount--;
+    delete m->year;
+    if (curIndex == movieCount)
+    {
+        return;
+    }
+    else
+    {
+        for (int i = curIndex; i < movieCount; i++)
+        {
+            movies[curIndex] = movies[curIndex+1];
+        }
     }
 }
 
@@ -195,4 +300,12 @@ int mainProgram()
         
     }
     return 0;
+}
+
+/* Convert a string to lowercase */
+string toLowerCase(const string &str)
+{
+    string lowerStr = str;
+    transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(), ::tolower);
+    return lowerStr;
 }
