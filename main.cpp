@@ -104,7 +104,7 @@ void MovieManager::save()
   int cur = 0;
   while(movies->title != "")
   {
-    outFile << movies->title << "|" << movies->year << "|" << movies->ratings << "\n";
+    outFile << movies->id << "|" << movies->title << "|" << movies->year << "|" << movies->ratings << "\n";
   }
 }
 
