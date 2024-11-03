@@ -16,7 +16,7 @@
 #include <string>
 using namespace std;
 
-/*---------------------------------------- STRUCT & FUNCTION PROTOTYPES -----------------------------------------*/
+/*---------------------------------------------- STRUCT AND CLASS -----------------------------------------------*/
 
 struct Movie
 {
@@ -26,20 +26,36 @@ struct Movie
     int ratings;
 };
 
-void loadMovies(Movie* movies);
-void saveMovies(Movie* movies);
-int mainProgram();
+class MovieManager
+{
+    private:
+        const int SIZE = 200;
+        Movie* const movies = new Movie[SIZE]();
+
+        static int totalMovies;
+        
+        void save();
+
+    public:
+        MovieManager();
+        void printMovies();
+        int mainProgram();
+        int getTotalMovies() { return totalMovies; }
+};
+
+int MovieManager::totalMovies = 0;
 
 /*----------------------------------------------- MAIN FUNCTION ------------------------------------------------*/
 
 int main()
 {
-
+    MovieManager manager = MovieManager();
+    manager.printMovies();
 }
 
 /*-------------------------------------------- FUNCTION DEFINITION ---------------------------------------------*/
 
-void loadMovies(Movie* movies)
+MovieManager::MovieManager()
 {
     ifstream inFile("movies.txt");
 
@@ -49,7 +65,6 @@ void loadMovies(Movie* movies)
         ofstream outFile("movies.txt");
         outFile << "id|title|year|ratings\n";
         outFile.close();
-        return;
     }
 
     string line;
@@ -57,35 +72,50 @@ void loadMovies(Movie* movies)
     int cur = 0;
     while (getline(inFile, line))
     {
+        string id, title, year, ratings;
+
         int i = 0;
         int temp = line.find("|");
-        while(i != temp) movies[cur].title += line[i++];
+        while(i != temp) id += line[i++];
         i++;
         temp = line.find("|", i);
-        while(i != temp) movies[cur].year += line[i++];
+        while(i != temp) title += line[i++];
         i++;
-        while(i < line.length()) movies[cur].ratings += line[i++];
+        temp = line.find("|", i);
+        while(i != temp) year += line[i++];
+        i++;
+        while(i < line.length()) ratings += line[i++];
+
+        movies[cur].id = stoi(id);
+        movies[cur].title = title;
+        movies[cur].year = stoi(year);
+        movies[cur].ratings = stoi(ratings);
+
+        totalMovies += 1;
     }
     inFile.close();
 }
 
-void saveMovies(Movie* movies)
+void MovieManager::save()
 {
   ofstream outFile("movies.txt");
 
-  if (!outFile)
-  {
-    cout << "Save Movies failed." << endl;
-    return;
-  }
-
-  cout << "Title|Release_Year|Ratings\n";
-
+  cout << "id|title|year|ratings\n";
   int cur = 0;
   while(movies->title != "")
   {
     outFile << movies->title << "|" << movies->year << "|" << movies->ratings << "\n";
   }
+}
+
+void MovieManager::printMovies()
+{
+
+    for (int i = 0; i < totalMovies; i++)
+    {
+        Movie m = *(movies+i);
+        cout << "Movie ID: " << m.id << ", Title: " << m.title << ", Year: " << m.year << ", Ratings: " << m.ratings << "\n"; 
+    }
 }
 
 int mainProgram()
@@ -112,7 +142,7 @@ int mainProgram()
             cout << "Enter the year the movie was released: ";
             cin >> s.year;
             cout << "Enter the movie rating: ";
-            cin >> s.rating;
+            cin >> s.ratings;
             //function file
         }
         else if(func==3)
