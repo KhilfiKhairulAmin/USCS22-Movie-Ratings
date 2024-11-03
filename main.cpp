@@ -22,7 +22,7 @@ struct Movie
 {
     int id;
     string title;
-    int year;
+    int *year;
     int ratings;
 };
 
@@ -88,7 +88,7 @@ MovieManager::MovieManager()
 
         movies[cur].id = stoi(id);
         movies[cur].title = title;
-        movies[cur].year = stoi(year);
+        *(movies[cur].year) = stoi(year);
         movies[cur].ratings = stoi(ratings);
 
         totalMovies += 1;
@@ -140,7 +140,7 @@ int mainProgram()
             cout << "Enter the movie name: ";
             getline(cin,s.title);
             cout << "Enter the year the movie was released: ";
-            cin >> s.year;
+            cin >> *(s.year);
             cout << "Enter the movie rating: ";
             cin >> s.ratings;
             //function file
