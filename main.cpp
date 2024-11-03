@@ -21,10 +21,10 @@ using namespace std;
 
 struct Movie
 {
-    int id;
-    string title;
+    int id = 0;
+    string title = "";
     int *year;
-    int ratings;
+    int ratings = 0;
 };
 
 class MovieManager
@@ -34,6 +34,7 @@ class MovieManager
         Movie* const movies = new Movie[SIZE]();
 
         static int movieCount;
+        static int highestId;
         
         void save();
 
@@ -47,19 +48,162 @@ class MovieManager
         Movie* searchRatings(int ratings);
         void deleteMovie(int id);
         void printMovies();
+        static void printMovies(Movie* movieArray);
+        static void printMovie(Movie movie);
         
         Movie* getAllMovies() { return movies; }
         int getMovieCount() { return movieCount; }
 };
 
 int MovieManager::movieCount = 0;
+int MovieManager::highestId = 0;
 
 /*----------------------------------------------- MAIN FUNCTION ------------------------------------------------*/
 
 int main()
 {
     MovieManager manager = MovieManager();
-    manager.printMovies();
+    while(true)
+    {
+        int func;
+        cout << "what function do you want to do: \n" << "1.View movies\n2.Input movie\n3.Calculate average rating\n4.Search movie\n5.Edit movie\n6.Delete movie\n7.Exit\n";
+        cout << "----------\nfunction: ";
+        cin >> func;
+        cin.ignore();
+        cout << endl;
+        
+        if(func==1)
+        {
+            manager.printMovies();
+            string temp;
+            getline(cin, temp);
+        }
+        else if (func==2)
+        {
+            string s;
+            int year, ratings;
+            //sini buat cls tapi aq punya macbook xleh (cls= clear screen)
+            cout << "----------\nINPUT DATA\n------------\n";
+            cout << "Enter the movie name: ";
+            getline(cin,s);
+            cout << "Enter the year the movie was released: ";
+            cin >> year;
+            cin.ignore();
+            cout << "Enter the movie rating: ";
+            cin >> ratings;
+            cin.ignore();
+            manager.addMovie(s, year, ratings);
+            cout << "Movie added.";
+            getline(cin, s);
+
+            //function file
+        }
+        else if(func==3)
+        {
+            //recursive function average
+        }
+        else if(func==4)
+        {
+            cout << "Search by:\n1.Id    2.Title    3.Year    4.Ratings\nChoose: ";
+            int choose;
+            cin >> choose;
+            cin.ignore();
+            if (choose == 1)
+            {
+                cout << endl << "Enter ID to search: ";
+                int id;
+                cin >> id;
+                cin.ignore();
+
+                Movie* searchResult = manager.searchId(id);
+                if (searchResult != nullptr)
+                {
+                    manager.printMovie(*searchResult);
+                }
+                else
+                {
+                    cout << "Movie with ID " << id << " doesn't exist." << endl;
+                }
+            }
+            else if (choose == 2)
+            {
+                cout << endl << "Enter Title to search: ";
+                string title;
+                getline(cin, title);
+
+                Movie* searchResult = manager.searchTitle(title);
+                if (searchResult != nullptr)
+                {
+                    manager.printMovies(searchResult);
+                }
+                else
+                {
+                    cout << "None." << endl;
+                }
+            }
+            else if (choose == 3)
+            {
+                cout << endl << "Enter Year to search: ";
+                int year;
+                cin >> year;
+                cin.ignore();
+
+                Movie* searchResult = manager.searchYear(year);
+                if (searchResult != nullptr)
+                {
+                    manager.printMovies(searchResult);
+                }
+                else
+                {
+                    cout << "None." << endl;
+                }
+            }
+            else if (choose == 4)
+            {
+                cout << endl << "Enter Year to search: ";
+                int ratings;
+                cin >> ratings;
+                cin.ignore();
+
+                Movie* searchResult = manager.searchRatings(ratings);
+                if (searchResult != nullptr)
+                {
+                    manager.printMovies(searchResult);
+                }
+                else
+                {
+                    cout << "None." << endl;
+                }
+            }
+            string temp;
+            getline(cin, temp);
+        }
+        else if(func==5)
+        {
+            // Nantila buat, malas :3
+        }
+        else if(func==6)
+        {
+            int id;
+            cout << "Enter Movie ID to delete: ";
+            cin >> id;
+            cin.ignore();
+
+            manager.deleteMovie(id);
+            cout << "Deleted.";
+            string temp;
+            getline(cin, temp);
+        }
+        else if(func==7)
+        {
+            return 0;
+        }
+        else
+        {
+            cout << "Wrong function number entered.";
+        }
+    }
+    return 0;
 }
 
 /*-------------------------------------------- FUNCTION DEFINITION ---------------------------------------------*/
@@ -102,7 +246,9 @@ MovieManager::MovieManager()
         movies[cur].year = yearConvert;
         movies[cur].ratings = stoi(ratings);
 
+        highestId = movies[cur].id;
         movieCount += 1;
+        cur++;
     }
     inFile.close();
 }
@@ -113,12 +259,6 @@ MovieManager::~MovieManager()
     // Make sure to save to text file before program ends
     save();
 
-    // Deletes all year (because `year` is a DMA)
-    for (int i = 0; i < movieCount; i++)
-    {
-        delete movies[i].year;
-    }
-
     // Free movies from memory
     delete[] movies;
 }
@@ -128,11 +268,11 @@ void MovieManager::save()
 {
   ofstream outFile("movies.txt");
 
-  cout << "id|title|year|ratings\n";
+  outFile << "id|title|year|ratings\n";
   int cur = 0;
-  while(movies->title != "")
+  for (int i = 0; i < movieCount; i++)
   {
-    outFile << movies->id << "|" << movies->title << "|" << movies->year << "|" << movies->ratings << "\n";
+    outFile << movies[i].id << "|" << movies[i].title << "|" << *(movies[i].year) << "|" << movies[i].ratings << "\n";
   }
 }
 
@@ -143,15 +283,33 @@ void MovieManager::printMovies()
     for (int i = 0; i < movieCount; i++)
     {
         Movie m = *(movies+i);
-        cout << "Movie ID: " << m.id << ", Title: " << m.title << ", Year: " << m.year << ", Ratings: " << m.ratings << "\n"; 
+        cout << "Movie ID: " << m.id << ", Title: " << m.title << ", Year: " << *(m.year) << ", Ratings: " << m.ratings << "\n"; 
     }
+}
+
+/* Print all data about movies inside the given array pointer */
+void MovieManager::printMovies(Movie* movieArray)
+{
+    int i = 0;
+    while ((movieArray+i)->title != "")
+    {
+        Movie m = *(movieArray+i);
+        printMovie(m);
+        i++; 
+    }
+}
+
+/* Print data about one movie inside the given array pointer */
+void MovieManager::printMovie(Movie movie)
+{
+    cout << "Movie ID: " << movie.id << ", Title: " << movie.title << ", Year: " << *(movie.year) << ", Ratings: " << movie.ratings << "\n";
 }
 
 /* Create new movie and store it inside the pointer array */
 Movie* MovieManager::addMovie(string title, int year, int ratings)
 {
     int* yearDMA = new int(year);
-    movies[movieCount].id = movieCount;
+    movies[movieCount].id = ++highestId;
     movies[movieCount].title = title;
     movies[movieCount].year = yearDMA;
     movies[movieCount].ratings = ratings;
@@ -171,6 +329,15 @@ Movie* MovieManager::searchId(int id)
             return movies+i;
         }
     }
+    return nullptr;
+}
+
+/* Convert a string to lowercase */
+string toLowerCase(const string &str)
+{
+    string lowerStr = str;
+    transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(), ::tolower);
+    return lowerStr;
 }
 
 /* Search for movies based on given movie title */
@@ -186,6 +353,10 @@ Movie* MovieManager::searchTitle(string title)
             result[cur] = movies[i];
             cur++;
         }
+    }
+    if (cur == 0)
+    {
+        return nullptr;
     }
     return result;
 }
@@ -203,6 +374,10 @@ Movie* MovieManager::searchYear(int year)
             cur++;
         }
     }
+    if (cur == 0)
+    {
+        return nullptr;
+    }
     return result;
 }
 
@@ -219,6 +394,10 @@ Movie* MovieManager::searchRatings(int ratings)
             cur++;
         }
     }
+    if (cur == 0)
+    {
+        return nullptr;
+    }
     return result;
 }
 
@@ -228,7 +407,7 @@ void MovieManager::deleteMovie(int id)
     Movie* m = searchId(id);
 
     // Id doesn't exist
-    if (m->title == "")
+    if (m == nullptr)
     {
         return;
     }
@@ -238,74 +417,21 @@ void MovieManager::deleteMovie(int id)
     delete m->year;
     if (curIndex == movieCount)
     {
+        if (movieCount > 1)
+        {
+            highestId = (m-1)->id;
+        }
         return;
     }
     else
     {
         for (int i = curIndex; i < movieCount; i++)
         {
-            movies[curIndex] = movies[curIndex+1];
+            Movie* m_cur = movies+i, m_next = movies[i+1];
+            m_cur->id = m_next.id;
+            m_cur->title = m_next.title;
+            m_cur->year = m_next.year;
+            m_cur->ratings = m_next.ratings;
         }
     }
-}
-
-int mainProgram()
-{
-    while(true)
-    {
-        int func;
-        cout << "what function do you want to do: " << endl << "1.See data\n2.Input data\n3.Calculate average rating\n";
-        cout << "----------\nfunction: ";
-        cin >> func;
-        
-        if(func==1)
-        {
-            //see data function
-        }
-        else if (func==2)
-        {
-            Movie s;
-            //sini buat cls tapi aq punya macbook xleh (cls= clear screen)
-            cout << "----------\nINPUT DATA\n------------\n";
-            cin.ignore();
-            cout << "Enter the movie name: ";
-            getline(cin,s.title);
-            cout << "Enter the year the movie was released: ";
-            cin >> *(s.year);
-            cout << "Enter the movie rating: ";
-            cin >> s.ratings;
-            //function file
-        }
-        else if(func==3)
-        {
-            //recursive function average
-        }
-        else
-        {
-            cout << "Wrong function number entered.";
-        }
-        //mungkin sini cls
-        char repeat;
-        cout << "Do you want to repeat <y,n> :";
-        cin >> repeat;
-        if(repeat=='y' || repeat=='Y')//mungkin boleh buat to_upper or lower
-        {
-            continue;
-        }
-        else
-        {
-            break;
-        }
-        
-        
-    }
-    return 0;
-}
-
-/* Convert a string to lowercase */
-string toLowerCase(const string &str)
-{
-    string lowerStr = str;
-    transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(), ::tolower);
-    return lowerStr;
 }
