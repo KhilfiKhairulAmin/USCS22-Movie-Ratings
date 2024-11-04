@@ -3,6 +3,9 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstring>
+#include <cstdlib>
+#include <sstream>
 #include <algorithm>
 #include <stdlib.h>
 using namespace std;
@@ -74,6 +77,7 @@ int main()
                 manager.printMovies();
             }
             getline(cin, temp);
+            system("cls");
         }
         else if (func==2)
         {
@@ -92,6 +96,7 @@ int main()
             manager.addMovie(s, year, ratings);
             cout << "Movie added.";
             getline(cin, s);
+            system("cls");
 
             //function file
         }
@@ -113,7 +118,7 @@ int main()
                 cin.ignore();
 
                 Movie* searchResult = manager.searchId(id);
-                if (searchResult != nullptr)
+                if (searchResult != NULL)
                 {
                     manager.printMovie(*searchResult);
                 }
@@ -129,7 +134,7 @@ int main()
                 getline(cin, title);
 
                 Movie* searchResult = manager.searchTitle(title);
-                if (searchResult != nullptr)
+                if (searchResult != NULL)
                 {
                     manager.printMovies(searchResult);
                 }
@@ -146,7 +151,7 @@ int main()
                 cin.ignore();
 
                 Movie* searchResult = manager.searchYear(year);
-                if (searchResult != nullptr)
+                if (searchResult != NULL)
                 {
                     manager.printMovies(searchResult);
                 }
@@ -163,7 +168,7 @@ int main()
                 cin.ignore();
 
                 Movie* searchResult = manager.searchRatings(ratings);
-                if (searchResult != nullptr)
+                if (searchResult != NULL)
                 {
                     manager.printMovies(searchResult);
                 }
@@ -199,6 +204,7 @@ int main()
         {
             cout << "Wrong function number entered.";
         }
+        system("cls");
     }
     return 0;
 }
@@ -237,11 +243,16 @@ MovieManager::MovieManager()
         i++;
         while(i < line.length()) ratings += line[i++];
 
-        movies[cur].id = stoi(id);
+        //movies[cur].id = stoi(id);
+        stringstream ss(id);
+        ss >> movies[cur].id;
         movies[cur].title = title;
-        int* yearConvert = new int(stoi(year));
-        movies[cur].year = yearConvert;
-        movies[cur].ratings = stoi(ratings);
+        stringstream ss2(year);
+        int yearNumber;
+        ss2 >> yearNumber;
+        movies[cur].year = &yearNumber;
+        stringstream ss3(ratings);
+        ss3 >> movies[cur].ratings;
 
         highestId = movies[cur].id;
         movieCount += 1;
@@ -326,7 +337,7 @@ Movie* MovieManager::searchId(int id)
             return movies+i;
         }
     }
-    return nullptr;
+    return NULL;
 }
 
 /* Convert a string to lowercase */
@@ -353,7 +364,7 @@ Movie* MovieManager::searchTitle(string title)
     }
     if (cur == 0)
     {
-        return nullptr;
+        return NULL;
     }
     return result;
 }
@@ -373,7 +384,7 @@ Movie* MovieManager::searchYear(int year)
     }
     if (cur == 0)
     {
-        return nullptr;
+        return NULL;
     }
     return result;
 }
@@ -393,7 +404,7 @@ Movie* MovieManager::searchRatings(int ratings)
     }
     if (cur == 0)
     {
-        return nullptr;
+        return NULL;
     }
     return result;
 }
@@ -404,7 +415,7 @@ void MovieManager::deleteMovie(int id)
     Movie* m = searchId(id);
 
     // Id doesn't exist
-    if (m == nullptr)
+    if (m == NULL)
     {
         return;
     }
