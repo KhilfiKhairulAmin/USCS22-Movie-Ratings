@@ -41,7 +41,7 @@ class MovieManager
         Movie* searchYear(int year);
         Movie* searchRatings(int ratings);
         void deleteMovie(int id);
-        double getAverageRatings(Movie* movies, int cur, double total);
+        double getAverageRatings(Movie* movies, int cur);
         void printMovies();
         static void printMovies(Movie* movieArray);
         static void printMovie(Movie movie);
@@ -104,7 +104,7 @@ int main()
         }
         else if(func == 3)
         {
-            cout << "Average ratings: " << manager.getAverageRatings();
+            cout << "Average ratings: " << manager.getAverageRatings(manager.getAllMovies(), 0);
             string temp;
             getline(cin, temp);
         }
@@ -289,10 +289,17 @@ void MovieManager::save()
 }
 
 /* Calculate average ratings for all movies */
-double MovieManager::getAverageRatings(Movies* movies, int cur = 0, double total=0)
+double MovieManager::getAverageRatings(Movie* movies, int cur = 0)
 {
-    double total = 0;
-    return total / movieCount;
+    if (cur == movieCount)
+    {
+        return 0;
+    }
+    else
+    {
+        cur++;
+        return movies->ratings / double(movieCount) + getAverageRatings(++movies, cur) ;
+    }
 }
 
 /* Print all data about movies */
