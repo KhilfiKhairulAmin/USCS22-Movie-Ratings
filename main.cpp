@@ -1,20 +1,10 @@
-/*---------------------------------------------------- TODOS ----------------------------------------------------*/
-
-// [✓] Implement Struct for movies
-// TODO: Implement file read and write + debug print
-// TODO: Arrays and pointers movies
-// TODO: Implement class for movie management
-// TODO: Recursion for calculating average ratings
-// TODO: Attractive GUI using string
-// TODO: Report (cover page, table of content, intro about topic, explain important codes, example output)
-// ** Program must contain string input/output, struct, class, array, pointer, recursion, file operations 
-
 /*-------------------------------------------------- INCLUDES ---------------------------------------------------*/
 
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <algorithm>
+#include <stdlib.h>
 using namespace std;
 
 /*---------------------------------------------- STRUCT AND CLASS -----------------------------------------------*/
@@ -74,8 +64,15 @@ int main()
         
         if(func==1)
         {
-            manager.printMovies();
             string temp;
+            if (manager.getMovieCount() == 0)
+            {
+                cout << "No movies available." << endl;
+            }
+            else
+            {
+                manager.printMovies();
+            }
             getline(cin, temp);
         }
         else if (func==2)
