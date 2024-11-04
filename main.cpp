@@ -61,7 +61,18 @@ int main()
     while(true)
     {
         int func;
-        cout << "what function do you want to do: \n" << "1.View movies\n2.Input movie\n3.Calculate average rating\n4.Search movie\n5.Edit movie\n6.Delete movie\n7.Exit\n";
+                cout << "-----------------------------------------------------------------------------------------\n";
+cout<<" /$$      /$$  /$$$$$$  /$$$$$$ /$$   /$$       /$$      /$$ /$$$$$$$$ /$$   /$$ /$$   /$$\n";
+cout<<"| $$$    /$$$ /$$__  $$|_  $$_/| $$$ | $$      | $$$    /$$$| $$_____/| $$$ | $$| $$  | $$\n";
+cout<<"| $$$$  /$$$$| $$  \  $$  | $$  | $$$$| $$      | $$$$  /$$$$| $$      | $$$$| $$| $$  | $$\n";
+cout<<"| $$ $$/$$ $$| $$$$$$$$  | $$  | $$ $$ $$      | $$ $$/$$ $$| $$$$$   | $$ $$ $$| $$  | $$\n";
+cout<<"| $$  $$$| $$| $$__  $$  | $$  | $$  $$$$      | $$  $$$| $$| $$__/   | $$  $$$$| $$  | $$\n";
+cout<<"| $$\  $ |  $$| $$  | $$  | $$  | $$\   $$$      | $$\  $  | $$| $$      | $$\   $$$| $$  | $$\n";
+cout<<"| $$ \/  |  $$| $$  | $$ /$$$$$$| $$ \   $$      | $$ \/   | $$| $$$$$$$$| $$ \   $$|  $$$$$$/\n";
+cout<<"|__/     |__/|__/  |__/|______/|__/  \__/       |__/     |__/|________/|__/  \__/ \______/ \n";
+cout << "-----------------------------------------------------------------------------------------\n"<<endl;
+       
+        cout << "what function do you want to do: \n" << "1.View movies\n2.Input movie\n3.Calculate average rating\n4.Search movie\n5.Delete movie\n6.Exit\n";
         cout << "----------\nfunction: ";
         cin >> func;
         cin.ignore();
@@ -186,10 +197,6 @@ int main()
         }
         else if(func==5)
         {
-            // Nantila buat, malas :3
-        }
-        else if(func==6)
-        {
             int id;
             cout << "Enter Movie ID to delete: ";
             cin >> id;
@@ -200,7 +207,7 @@ int main()
             string temp;
             getline(cin, temp);
         }
-        else if(func==7)
+        else if(func==6)
         {
             return 0;
         }
@@ -430,7 +437,6 @@ Movie* MovieManager::searchRatings(int ratings)
 /* Delete movie based on given id */
 void MovieManager::deleteMovie(int id)
 {
-    cout << "HERE";;
     Movie* m = searchId(id);
 
     // Id doesn't exist
