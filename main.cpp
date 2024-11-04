@@ -8,6 +8,7 @@
 #include <sstream>
 #include <algorithm>
 #include <stdlib.h>
+#include <iomanip>
 using namespace std;
 
 /*---------------------------------------------- STRUCT AND CLASS -----------------------------------------------*/
@@ -40,6 +41,7 @@ class MovieManager
         Movie* searchYear(int year);
         Movie* searchRatings(int ratings);
         void deleteMovie(int id);
+        double getAverageRatings(Movie* movies, int cur, double total);
         void printMovies();
         static void printMovies(Movie* movieArray);
         static void printMovie(Movie movie);
@@ -64,7 +66,7 @@ int main()
         cin >> func;
         cin.ignore();
         cout << endl;
-        
+        system("cls");
         if(func==1)
         {
             string temp;
@@ -100,14 +102,16 @@ int main()
 
             //function file
         }
-        else if(func==3)
+        else if(func == 3)
         {
-            //recursive function average
+            cout << "Average ratings: " << manager.getAverageRatings();
+            string temp;
+            getline(cin, temp);
         }
         else if(func==4)
         {
             cout << "Search by:\n1.Id    2.Title    3.Year    4.Ratings\nChoose: ";
-            int choose;
+            int choose;\
             cin >> choose;
             cin.ignore();
             if (choose == 1)
@@ -250,7 +254,7 @@ MovieManager::MovieManager()
         stringstream ss2(year);
         int yearNumber;
         ss2 >> yearNumber;
-        movies[cur].year = &yearNumber;
+        movies[cur].year = new int(yearNumber);
         stringstream ss3(ratings);
         ss3 >> movies[cur].ratings;
 
@@ -282,6 +286,13 @@ void MovieManager::save()
   {
     outFile << movies[i].id << "|" << movies[i].title << "|" << *(movies[i].year) << "|" << movies[i].ratings << "\n";
   }
+}
+
+/* Calculate average ratings for all movies */
+double MovieManager::getAverageRatings(Movies* movies, int cur = 0, double total=0)
+{
+    double total = 0;
+    return total / movieCount;
 }
 
 /* Print all data about movies */
@@ -412,6 +423,7 @@ Movie* MovieManager::searchRatings(int ratings)
 /* Delete movie based on given id */
 void MovieManager::deleteMovie(int id)
 {
+    cout << "HERE";;
     Movie* m = searchId(id);
 
     // Id doesn't exist
